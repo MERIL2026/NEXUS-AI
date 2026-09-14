@@ -1,0 +1,77 @@
+# ============================================================
+# NEXUS AI — .npmignore
+# Explicitly excludes development, test, and personal files
+# from the published npm package.
+# ============================================================
+
+# TypeScript source — only compiled dist/ is shipped
+src/
+
+# Root-level TypeScript scratch / test scripts
+*.ts
+
+# TypeScript config — not needed at runtime
+tsconfig.json
+tsconfig*.json
+
+# Developer environment files — MUST NOT be included
+.env
+.env.*
+!.env.example
+
+# Local databases (developer-specific data)
+data/
+*.sqlite
+*.sqlite-journal
+*.db
+
+# Local workspace files (developer-specific content)
+workspace/
+
+# Local log files
+logs/
+*.log
+
+# Scratch and development artifacts
+scratch/
+graphify-out/
+
+# Documentation and reports not meant for package consumers
+docs/
+documents/
+p7e_completion_report.md
+
+# Release artifacts (intermediate files)
+release/
+
+# Electron configuration (not needed for npm CLI)
+electron-builder.json
+
+# ESLint + Vitest config (dev tooling)
+eslint.config.mjs
+vitest.config.ts
+
+# Test coverage artifacts
+coverage/
+.nyc_output/
+.vitest/
+
+# IDE metadata
+.vscode/
+.idea/
+.claude/
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Virtual environments
+.venv/
+
+# Source maps (optional — reduces package size)
+dist/**/*.map
+dist/**/*.d.ts
+dist/**/*.d.ts.map
+
+# Node modules (npm handles these)
+node_modules/

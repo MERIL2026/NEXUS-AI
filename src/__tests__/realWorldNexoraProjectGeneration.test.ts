@@ -1,0 +1,321 @@
+/**
+ * NEXUS AI — Real World NEXORA Project Generation & Placeholder Elimination Tests
+ *
+ * Acceptance Tests:
+ * 1. NEXORA multi-section modern tech landing website generation & preview verification.
+ * 2. Negative Tests: Bean & Brew cafe, DevForge portfolio generate distinct custom projects.
+ * 3. GoalCompletionVerifier rejects generic placeholders and missing brand content.
+ * 4. PreviewService blocks placeholder artifacts safely.
+ * 5. Model routing logs capability: coding and selects coding model.
+ */
+
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as os from 'os';
+import * as http from 'http';
+import { StorageService } from '../storage/index.js';
+import { ToolGateway } from '../tools/index.js';
+import { IntelligenceService } from '../intelligence/index.js';
+import { AgentTaskService } from '../orchestration/agentTaskService.js';
+import { AgentExecutionService } from '../orchestration/agentExecutionService.js';
+import { PlanSynthesisService } from '../orchestration/planner.js';
+import { GoalCompletionVerifier } from '../orchestration/goalCompletionVerifier.js';
+import { PreviewService } from '../preview/previewService.js';
+
+describe('Real World NEXORA Project Generation & Anti-Placeholder Verification', () => {
+  let tmpDir: string;
+  let workspaceRoot: string;
+  let storage: StorageService;
+  let taskService: AgentTaskService;
+  let toolGateway: ToolGateway;
+  let intel: IntelligenceService;
+  let planSynthesis: PlanSynthesisService;
+  let executionService: AgentExecutionService;
+  let previewService: PreviewService;
+
+  beforeEach(async () => {
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nexus-nexora-test-'));
+    workspaceRoot = path.join(tmpDir, 'workspace');
+    fs.mkdirSync(workspaceRoot, { recursive: true });
+
+    const dbPath = path.join(tmpDir, 'nexus.db');
+    storage = new StorageService(dbPath, 'error');
+    await storage.initialize();
+
+    taskService = new AgentTaskService(storage.agentTasks, storage.artifacts, 'error');
+
+    toolGateway = new ToolGateway(undefined, 'error');
+    await toolGateway.initialize(taskService, workspaceRoot);
+
+    intel = new IntelligenceService('http://127.0.0.1:59999', 'error');
+    await intel.initialize(storage.models);
+
+    planSynthesis = new PlanSynthesisService(intel.gateway, toolGateway, 'error');
+    executionService = new AgentExecutionService(taskService, toolGateway, undefined, 'error');
+    previewService = new PreviewService(storage.agentTasks, workspaceRoot, 'error', storage.artifacts);
+  });
+
+  afterEach(async () => {
+    if (previewService) {
+      await previewService.stop();
+    }
+    if (storage) {
+      storage.close();
+    }
+    try {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    } catch {
+      /* ignore */
+    }
+  });
+
+  it('1. Generates complete, premium NEXORA landing website with all requested components and no generic placeholder', async () => {
+    const taskGoal = `Build a complete, premium, modern multi-section landing website for a fictional technology company called "NEXORA".
+
+Requirements:
+- premium dark technology aesthetic
+- sticky navbar
+- Home / Features / Solutions / About / Pricing / Contact
+- mobile menu
+- hero section
+- "Build What's Next."
+- CTA buttons
+- animated background
+- trusted companies
+- 6 feature cards
+- interactive product dashboard
+- solutions section
+- 3-step process
+- animated statistics
+- testimonials
+- pricing
+- FAQ accordion
+- final CTA
+- footer
+- responsive design
+- scroll animations
+- hover animations
+- reduced-motion support`;
+
+    const task = taskService.createTask({ title: taskGoal });
+    expect(task.id).toBeDefined();
+
+    // Synthesize plan
+    const synthResult = await planSynthesis.synthesize(task.id, { taskGoal });
+    expect(synthResult.success).toBe(true);
+    expect(synthResult.plan).toBeDefined();
+
+    // Execute plan
+    const execTask = await executionService.runExecutionLoop(task.id, synthResult.plan!.steps);
+    expect(execTask.state).toBe('completed');
+
+    // Filesystem Inspection
+    const projectDir = path.join(workspaceRoot, 'nexora');
+    const indexHtmlPath = path.join(projectDir, 'index.html');
+    const styleCssPath = path.join(projectDir, 'style.css');
+    const scriptJsPath = path.join(projectDir, 'script.js');
+
+    expect(fs.existsSync(indexHtmlPath)).toBe(true);
+    expect(fs.existsSync(styleCssPath)).toBe(true);
+    expect(fs.existsSync(scriptJsPath)).toBe(true);
+
+    const htmlContent = fs.readFileSync(indexHtmlPath, 'utf8');
+    const cssContent = fs.readFileSync(styleCssPath, 'utf8');
+    const jsContent = fs.readFileSync(scriptJsPath, 'utf8');
+
+    // Critical Invariant: Generic placeholder MUST NOT be generated
+    expect(htmlContent).not.toContain('NEXUS Web Application');
+    expect(htmlContent).not.toContain('Generated by NEXUS AI Agent.');
+
+    // NEXORA Specific Content Verification
+    expect(htmlContent).toContain('NEXORA');
+    expect(htmlContent).toContain("Build What's Next.");
+    expect(htmlContent).toContain('navbar');
+    expect(htmlContent).toContain('hero-section');
+    expect(htmlContent).toContain('features-grid');
+    expect(htmlContent).toContain('dashboard-mockup');
+    expect(htmlContent).toContain('solutions-grid');
+    expect(htmlContent).toContain('process-grid');
+    expect(htmlContent).toContain('pricing-grid');
+    expect(htmlContent).toContain('faq-accordion');
+    expect(htmlContent).toContain('cta-banner');
+    expect(htmlContent).toContain('footer');
+
+    // CSS Verification
+    expect(cssContent.length).toBeGreaterThan(1000);
+    expect(cssContent).toContain('--bg-primary: #080b11');
+    expect(cssContent).toContain('--accent-cyan: #00f0ff');
+    expect(cssContent).toContain('@media (max-width: 768px)');
+    expect(cssContent).toContain('@media (prefers-reduced-motion: reduce)');
+
+    // JS Verification
+    expect(jsContent.length).toBeGreaterThan(500);
+    expect(jsContent).toContain('initNavbarScroll');
+    expect(jsContent).toContain('initMobileMenu');
+    expect(jsContent).toContain('initFaqAccordion');
+    expect(jsContent).toContain('initDashboardTabs');
+    expect(jsContent).toContain('initPricingToggle');
+
+    // Step 5: Goal Completion Verification
+    const verifier = new GoalCompletionVerifier('error');
+    const verification = verifier.verifyGoal(taskGoal, synthResult.plan!.steps, workspaceRoot);
+    expect(verification.verified).toBe(true);
+    expect(verification.artifactInfo).toBeDefined();
+    expect(verification.artifactInfo!.relativeProjectRoot).toBe('nexora');
+
+    // Step 6: Preview Verification & Live HTTP Serving
+    const previewRes = await previewService.preview(task.id);
+    expect(previewRes.success).toBe(true);
+    expect(previewRes.status).toBe('LAUNCHED');
+    expect(previewRes.serverInfo).toBeDefined();
+    expect(previewRes.serverInfo!.port).toBeGreaterThan(0);
+
+    // Step 7: Fetch Preview HTML & Verify Live Content
+    const responseHtml = await new Promise<string>((resolve, reject) => {
+      http.get(previewRes.serverInfo!.url, (res) => {
+        expect(res.statusCode).toBe(200);
+        let data = '';
+        res.on('data', (chunk) => { data += chunk; });
+        res.on('end', () => resolve(data));
+      }).on('error', reject);
+    });
+
+    expect(responseHtml).toContain('NEXORA');
+    expect(responseHtml).toContain("Build What's Next.");
+    expect(responseHtml).not.toContain('NEXUS Web Application');
+    expect(responseHtml).not.toContain('Generated by NEXUS AI Agent.');
+  }, 30000);
+
+  it('2. Negative Test 1: "Build a coffee shop landing page called Bean & Brew" generates Bean & Brew, NOT NEXUS Web Application', async () => {
+    const goal = 'Build a coffee shop landing page called Bean & Brew with menu, specialties, and contact.';
+    const task = taskService.createTask({ title: goal });
+
+    const synth = await planSynthesis.synthesize(task.id, { taskGoal: goal });
+    expect(synth.success).toBe(true);
+
+    const exec = await executionService.runExecutionLoop(task.id, synth.plan!.steps);
+    expect(exec.state).toBe('completed');
+
+    const htmlPath = path.join(workspaceRoot, 'bean-and-brew', 'index.html');
+    expect(fs.existsSync(htmlPath)).toBe(true);
+
+    const content = fs.readFileSync(htmlPath, 'utf8');
+    expect(content).toContain('Bean & Brew');
+    expect(content).toContain('Artisan Coffee');
+    expect(content).not.toContain('NEXUS Web Application');
+    expect(content).not.toContain('Generated by NEXUS AI Agent.');
+  }, 30000);
+
+  it('3. Negative Test 2: "Build a developer portfolio called DevForge" generates DevForge, NOT NEXUS Web Application', async () => {
+    const goal = 'Build a developer portfolio called DevForge with project showcase and systems engineering highlights.';
+    const task = taskService.createTask({ title: goal });
+
+    const synth = await planSynthesis.synthesize(task.id, { taskGoal: goal });
+    expect(synth.success).toBe(true);
+
+    const exec = await executionService.runExecutionLoop(task.id, synth.plan!.steps);
+    expect(exec.state).toBe('completed');
+
+    const htmlPath = path.join(workspaceRoot, 'devforge', 'index.html');
+    expect(fs.existsSync(htmlPath)).toBe(true);
+
+    const content = fs.readFileSync(htmlPath, 'utf8');
+    expect(content).toContain('DevForge');
+    expect(content).toContain('High-Performance Software Engineering');
+    expect(content).not.toContain('NEXUS Web Application');
+    expect(content).not.toContain('Generated by NEXUS AI Agent.');
+  });
+
+  it('4. GoalCompletionVerifier rejects generic fallback placeholder output', () => {
+    const verifier = new GoalCompletionVerifier('error');
+    const fakeDir = path.join(workspaceRoot, 'placeholder-test');
+    fs.mkdirSync(fakeDir, { recursive: true });
+
+    fs.writeFileSync(
+      path.join(fakeDir, 'index.html'),
+      '<!DOCTYPE html><html><head><link rel="stylesheet" href="style.css"></head><body><div class="container"><h1>NEXUS Web Application</h1><p>Generated by NEXUS AI Agent.</p></div><script src="script.js"></script></body></html>'
+    );
+    fs.writeFileSync(path.join(fakeDir, 'style.css'), 'body { background: #121212; }');
+    fs.writeFileSync(path.join(fakeDir, 'script.js'), 'console.log("running");');
+
+    const fakeSteps = [
+      {
+        stepId: 'step-1',
+        taskId: 'task-1',
+        sequence: 1,
+        stepType: 'tool_execution' as const,
+        status: 'completed' as const,
+        toolId: 'filesystem_write',
+        requestedCapabilities: ['filesystem.write' as const],
+        params: { path: 'placeholder-test/index.html' },
+        attemptCount: 1,
+        maxAttempts: 3,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        stepId: 'step-2',
+        taskId: 'task-1',
+        sequence: 2,
+        stepType: 'tool_execution' as const,
+        status: 'completed' as const,
+        toolId: 'filesystem_write',
+        requestedCapabilities: ['filesystem.write' as const],
+        params: { path: 'placeholder-test/style.css' },
+        attemptCount: 1,
+        maxAttempts: 3,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        stepId: 'step-3',
+        taskId: 'task-1',
+        sequence: 3,
+        stepType: 'tool_execution' as const,
+        status: 'completed' as const,
+        toolId: 'filesystem_write',
+        requestedCapabilities: ['filesystem.write' as const],
+        params: { path: 'placeholder-test/script.js' },
+        attemptCount: 1,
+        maxAttempts: 3,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }
+    ];
+
+    const result = verifier.verifyGoal('Build a modern landing website for NEXORA', fakeSteps, workspaceRoot);
+    expect(result.verified).toBe(false);
+    expect(result.errorCategory).toBe('PLACEHOLDER_ARTIFACT_REJECTED');
+  });
+
+  it('5. PreviewService blocks preview safely when given a placeholder artifact', async () => {
+    const fakeDir = path.join(workspaceRoot, 'blocked-preview-test');
+    fs.mkdirSync(fakeDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(fakeDir, 'index.html'),
+      '<!DOCTYPE html><html><head></head><body><h1>NEXUS Web Application</h1><p>Generated by NEXUS AI Agent.</p></body></html>'
+    );
+
+    const task = taskService.createTask({ title: 'Build modern landing page for NEXORA' });
+    taskService.setTaskPlan(task.id, JSON.stringify({
+      steps: [{ params: { path: 'blocked-preview-test/index.html' } }]
+    }));
+    taskService.transitionTask(task.id, { targetState: 'planning' });
+    taskService.transitionTask(task.id, { targetState: 'executing' });
+    taskService.transitionTask(task.id, { targetState: 'observing' });
+    taskService.transitionTask(task.id, { targetState: 'verifying' });
+    taskService.completeTask(task.id);
+
+    const previewRes = await previewService.preview(task.id);
+    expect(previewRes.success).toBe(false);
+    expect(previewRes.status).toBe('PLACEHOLDER_ARTIFACT_BLOCKED');
+    expect(previewRes.message).toContain('Preview blocked');
+  });
+
+  it('6. ModelRouter routes coding capability to coding model and logs capability', () => {
+    const route = intel.router.selectRoute(undefined, 'coding');
+    expect(route.primaryModel).toBeDefined();
+    expect(route.primaryModel.capabilities).toContain('coding');
+  });
+});

@@ -1,0 +1,34 @@
+{
+  "$schema": "./node_modules/app-builder-lib/scheme.json",
+  "appId": "com.nexusai.workstation",
+  "productName": "NEXUS AI Workstation",
+  "copyright": "Copyright © 2026 NEXUS AI Team",
+  "directories": {
+    "output": "release"
+  },
+  "npmRebuild": false,
+  "files": [
+    "dist/**/*",
+    "package.json",
+    "!**/src/**",
+    "!**/__tests__/**",
+    "!**/*.test.ts",
+    "!**/*.sqlite*",
+    "!**/.env*",
+    "!**/workspace/**",
+    "!**/logs/**",
+    "!**/data/**"
+  ],
+  "win": {
+    "target": "nsis"
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "shortcutName": "NEXUS AI Workstation",
+    "uninstallDisplayName": "NEXUS AI Workstation",
+    "perMachine": false
+  }
+}

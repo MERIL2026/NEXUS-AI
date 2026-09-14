@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS AI — Local Workstation</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dark-theme">
+  <div id="app" class="app-container">
+    <!-- Top Header Bar -->
+    <header class="top-header">
+      <div class="brand">
+        <span class="brand-icon">⚡</span>
+        <span class="brand-name">NEXUS AI</span>
+        <span class="brand-badge">WORKSTATION</span>
+      </div>
+      <div class="header-status">
+        <div class="status-chip" id="hdr-system-status">
+          <span class="dot yellow"></span> System Status: <strong id="hdr-sys-val">BOOTING</strong>
+        </div>
+        <div class="status-chip" id="hdr-runtime-status">
+          <span class="dot gray"></span> AI Runtime: <strong id="hdr-rt-val">PROBING</strong>
+        </div>
+        <div class="status-chip model-chip">
+          Model: <strong id="hdr-model-val">qwen2.5:3b</strong>
+        </div>
+      </div>
+    </header>
+
+    <!-- App Main Area: Sidebar + Main Content -->
+    <div class="app-body">
+      <!-- Left Sidebar Nav -->
+      <nav class="sidebar">
+        <div class="nav-group">
+          <div class="nav-group-title">MAIN</div>
+          <button class="nav-item active" data-view="dashboard">
+            <span class="nav-icon">📊</span> Dashboard
+          </button>
+          <button class="nav-item" data-view="agent">
+            <span class="nav-icon">🤖</span> Agent Workspace
+          </button>
+          <button class="nav-item" data-view="plan">
+            <span class="nav-icon">📋</span> Plan View
+          </button>
+          <button class="nav-item" data-view="approvals">
+            <span class="nav-icon">🛡️</span> Approval Center
+            <span class="nav-badge hidden" id="nav-approval-count">0</span>
+          </button>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-group-title">WORKSPACE & HISTORY</div>
+          <button class="nav-item" data-view="explorer">
+            <span class="nav-icon">📁</span> Workspace Explorer
+          </button>
+          <button class="nav-item" data-view="diff">
+            <span class="nav-icon">🔍</span> File Diff Viewer
+          </button>
+          <button class="nav-item" data-view="history">
+            <span class="nav-icon">📜</span> Task History
+          </button>
+          <button class="nav-item" data-view="activity">
+            <span class="nav-icon">⏱️</span> Activity Timeline
+          </button>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-group-title">SYSTEM</div>
+          <button class="nav-item" data-view="models">
+            <span class="nav-icon">⚡</span> Models & Runtime
+          </button>
+          <button class="nav-item" data-view="knowledge">
+            <span class="nav-icon">📚</span> Knowledge / RAG
+          </button>
+          <button class="nav-item" data-view="settings">
+            <span class="nav-icon">⚙️</span> Settings
+          </button>
+        </div>
+
+        <div class="sidebar-footer">
+          <button id="btn-first-run-wizard" class="btn-secondary full-width">
+            ✨ Setup Wizard
+          </button>
+        </div>
+      </nav>
+
+      <!-- Main Content Container -->
+      <main class="main-content" id="main-view-container">
+        <!-- Views rendered dynamically via app.js -->
+        <div class="view-loading">
+          <div class="spinner"></div>
+          <p>Loading NEXUS AI Workstation...</p>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- First-Run Wizard Modal Overlay -->
+  <div id="modal-wizard" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>✨ Welcome to NEXUS AI</h2>
+        <button class="btn-close" id="btn-close-wizard">✕</button>
+      </div>
+      <div class="modal-body" id="wizard-content">
+        <!-- Driven dynamically by FirstRunReport -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary" id="btn-wizard-finish">NEXUS Ready</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

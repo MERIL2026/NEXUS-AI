@@ -1,113 +1,69 @@
 # Dependencies
-**/node_modules
+node_modules/
 .pnpm-store/
+.venv/
 
-# Build outputs
+# Build & Compilation outputs
 dist/
 build/
-*.dist
+out/
+*.tsbuildinfo
+*.tgz
 
-# Environment variables
+# Environment & Secrets
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# IDE and editor files
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+.env.*
+!.env.example
 
 # Logs
-logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+logs/
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
+# Testing & Coverage
 coverage/
-*.lcov
+.nyc_output/
+.vitest/
 
-# nyc test coverage
-.nyc_output
+# OS & IDE metadata
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.claude/
 
-# Dependency directories
-jspm_packages/
-
-# TypeScript cache
-*.tsbuildinfo
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Microbundle cache
-.rpt2_cache/
-.rts2_cache_cjs/
-.rts2_cache_es/
-.rts2_cache_umd/
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
-
-# Next.js build output
-.next
-
-# Nuxt.js build / generate output
-.nuxt
-
-# Gatsby files
-.cache/
-
-# Storybook build outputs
-.out
-.storybook-out
-
-# Temporary folders
-tmp/
-temp/
-
-# Database
-*.db
+# Local database & runtime data storage
 *.sqlite
-*.sqlite3
+*.sqlite-journal
+*.db
+data/
+storage/
 
-# Webdev artifacts (checkpoint zips, migrations, etc.)
-.webdev/
+# Temporary test workspaces & scratch output
+workspace/
+temp_test_workspace/
+nexus-test/
+nexus-blackbox-test/
+nexus-final-test/
+nexus-production-test/
+clean-web-test/
+scratch/
+graphify-out/
+release/
+release-proof/
+clean-release-proof/
+phase3-proof/
+phase5-proof/
+calculator.html
+offline-proof.txt
 
-# Manus version file (auto-generated, not part of source)
-client/public/__manus__/version.json
-.project-config.json
+# Root-level scratch test scripts (not part of production package or src/)
+model_routing_real_test.ts
+real_blackbox_preview_test.ts
+real_calc_test.ts
+run_cli_blackbox.js

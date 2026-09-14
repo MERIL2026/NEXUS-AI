@@ -1,231 +1,135 @@
-<div align="center">
+# NEXUS AI — Local-First AI Workstation CLI
 
-<br />
+NEXUS AI is a local-first, cross-platform AI workstation CLI that orchestrates local language models (via Ollama), retrieves private knowledge (RAG), manages project context, executes permission-controlled tools, and performs full coding-agent workflows — entirely on your own machine.
 
-<img src="https://raw.githubusercontent.com/MERIL2026/nexux-ai/main/client/public/nexus-logo.png" alt="NEXUS AI" width="100" />
+## Installation
 
-<br />
-<br />
+### Requirements
 
-# ◈ NEXUS AI
+- **Node.js** `>=20.0.0` — [nodejs.org](https://nodejs.org)
+- **Ollama** — [ollama.com/download](https://ollama.com/download)
+- At least one local model (e.g. `qwen2.5:3b`)
 
-### *Quiet Machine Cinema — High-Performance Autonomous Agentic Platform*
-
-<br />
-
-[![React](https://img.shields.io/badge/React_19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript_5.6-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![TailwindCSS](https://img.shields.io/badge/Tailwind_v4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![Vite](https://img.shields.io/badge/Vite_7.1-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
-[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
-[![License](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](LICENSE)
-
-<br />
-
-> **Don't just ask AI. Give it a job.**
-
-*NEXUS AI is a locally-installed autonomous agent for developers and builders who delegate complex digital workflows without losing visibility into execution.*
-
-<br />
-
-[![Live Demo](https://img.shields.io/badge/◈_LIVE_DEMO-031b29?style=for-the-badge&logoColor=8AE8FF)](https://nexux-ai-azure.vercel.app/)
-[![GitHub](https://img.shields.io/badge/SOURCE_CODE-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/MERIL2026/nexux-ai)
-
-<br />
-
----
-
-</div>
-
-<br />
-
-## ◈ Overview
-
-**NEXUS AI** pairs a high-precision CLI execution engine with a cinematic, liquid-glass web environment. Designed around the *Quiet Machine Cinema* aesthetic — the platform gives agents a visual stage and gives humans a control room.
-
-```
-THINK  ›  PLAN  ›  APPROVE  ›  EXECUTE  ›  ACHIEVE
-```
-
-The philosophy is simple: **full autonomy, zero blindspots.**
-
-- **Restrained Execution Rails** — Observe complex agent workflows step-by-step in real-time
-- **Cinematic Atmosphere** — Liquid-glass surfaces, editorial typography, and deep navy canvas
-- **Local Autonomy** — Full terminal and system control under transparent user supervision
-
-<br />
-
----
-
-## ⚡ Key Features
-
-<br />
-
-| Feature | Description |
-| :--- | :--- |
-| `◈` **CLI + Web Platform** | Seamless integration between `NEXUS CLI` terminal and the `NEXUS AI` visual workspace |
-| `◈` **Real-time Tracing** | Step pips, signal nodes, and interactive execution logs for complete observability |
-| `◈` **Liquid-Glass UI** | Hardware-accelerated backdrop blur, edge luminescence, and high-contrast typography |
-| `◈` **Local AI Inference** | Embedded Ollama runtime — your data never leaves your machine |
-| `◈` **Approval Workflow** | Human-in-the-loop checkpoints before any destructive or irreversible action |
-| `◈` **Project Preview** | Live preview of agent-generated outputs inside the workstation interface |
-
-<br />
-
----
-
-## 🛠️ Tech Stack
-
-<br />
-
-**Frontend**
-```
-React 19  ·  TypeScript 5.6  ·  Tailwind CSS v4  ·  Framer Motion  ·  Radix UI
-```
-
-**Backend**
-```
-Node.js  ·  Express  ·  tsx  ·  esbuild
-```
-
-**Build & Tooling**
-```
-Vite 7  ·  pnpm v10  ·  PostCSS  ·  Vitest  ·  @tailwindcss/vite
-```
-
-**AI Runtime**
-```
-Ollama  ·  Embedded Local Inference  ·  Workspace-aware RAG
-```
-
-<br />
-
----
-
-## 🚀 Quick Start
-
-<br />
-
-### Prerequisites
-
-- Node.js `≥ 20.0.0`
-- `pnpm` installed globally
+### Install NEXUS AI CLI
 
 ```bash
-npm i -g pnpm
+npm install -g @nexus-ai-nexoralabs/cli
 ```
 
-<br />
-
-### 1 — Clone
+### Install a local model (if you haven't already)
 
 ```bash
-git clone https://github.com/MERIL2026/nexux-ai.git
-cd nexux-ai
+ollama pull qwen2.5:3b
 ```
 
-### 2 — Install
+### Launch NEXUS
 
 ```bash
-pnpm install
+nexus
 ```
 
-### 3 — Run Dev Server
+That's it. NEXUS will initialize your workspace and configuration automatically on first run.
+
+---
+
+## First-Run Experience
+
+When you run `nexus` for the first time, NEXUS will:
+
+1. Create your personal workspace at `~/NEXUS-Workspace` (Windows: `%USERPROFILE%\NEXUS-Workspace`)
+2. Initialize the local database at `%APPDATA%\NEXUS AI\data\nexus.sqlite` (Windows) or `~/.nexus-ai/data/nexus.sqlite`
+3. Detect available Ollama models
+4. Display the interactive dashboard
+
+If Ollama is not installed or not running, NEXUS will display a clear, actionable setup guide instead of crashing.
+
+---
+
+## CLI Commands
+
+Once inside NEXUS:
+
+| Command         | Description                              |
+| --------------- | ---------------------------------------- |
+| `/help`         | Show all available commands              |
+| `/models`       | List available local AI models           |
+| `/model <id>`   | Switch to a specific model               |
+| `/tasks`        | Show recent tasks                        |
+| `/preview`      | Preview the latest completed web project |
+| `/preview stop` | Stop the preview server                  |
+| `/clear`        | Clear the screen                         |
+| `/exit`         | Exit NEXUS                               |
+
+---
+
+## Subsystem Architecture
+
+- `src/config/` — Environment configuration & production path resolution
+- `src/storage/` — SQLite persistence & workspace abstraction
+- `src/intelligence/` — Local Ollama gateway & model registry
+- `src/knowledge/` — RAG document indexing & retrieval
+- `src/tools/` — Controlled filesystem, search & terminal adapters
+- `src/orchestration/` — Agent planning, execution & verification
+- `src/preview/` — Local web project preview server
+- `src/api/` — Application API contracts & health checks
+
+---
+
+## Developer Setup
 
 ```bash
-pnpm dev
+# 1. Clone and install
+npm install
+
+# 2. Copy environment template
+cp .env.example .env
+
+# 3. Type check
+npm run typecheck
+
+# 4. Lint
+npm run lint
+
+# 5. Run tests
+npm test
+
+# 6. Build
+npm run build
+
+# 7. Run CLI in development mode
+npm run agent
 ```
 
-> Open [`http://localhost:5173`](http://localhost:5173) in your browser.
+## Testing & Acceptance Verification
 
-### 4 — Production Build
+NEXUS uses a multi-tier verification strategy:
+
+### A. Unit & Fast Integration Tests
 
 ```bash
-pnpm build
+npm test
 ```
 
-<br />
+Runs unit tests for isolated subsystems (routing, parsing, approval gate, tool execution, storage, config).
+
+### B. In-Process Integration Acceptance
+
+```bash
+npx tsx scripts/verify_decomposition_acceptance.ts
+```
+
+Tests end-to-end task decomposition, multi-unit dependency resolution, and preview gating in-process via `ApplicationApi`.
+
+### C. Real Installed CLI Black-Box End-to-End Acceptance
+
+```bash
+npm run test:e2e:cli
+```
+
+Spawns the actual installed `nexus` executable as a separate OS process, submitting prompts through interactive stdin, verifying dynamic CLI stdout, task plan cards, real child unit execution, `/tasks`, `/preview`, live HTTP preview responses, substance checks, and process restart/resume.
 
 ---
 
-## 📂 Project Structure
+## License
 
-```
-nexux-ai/
-│
-├── client/                   ◈  React 19 Frontend Application
-│   ├── public/               —  Static assets, logos & videos
-│   └── src/
-│       ├── components/       —  Hero, Features, CLI, Footer, etc.
-│       ├── pages/            —  Home, CLI, Product, Docs, ...
-│       └── index.css         —  Design tokens & Tailwind v4 rules
-│
-├── server/                   ◈  Express API & Agent Engine
-│
-├── shared/                   ◈  Cross-boundary Types & Schemas
-│
-└── package.json              —  Scripts & project manifest
-```
-
-<br />
-
----
-
-## 🎨 Design System
-
-<br />
-
-NEXUS AI follows the **Quiet Machine Cinema** design language — minimal, precise, and cinematic.
-
-| Token | Value | Usage |
-| :--- | :--- | :--- |
-| **Primary Canvas** | `#031b29` | Background deep navy |
-| **Signal Color** | `#8AE8FF` | Active execution states, highlights |
-| **Surface Glass** | `rgba(255,255,255,0.04)` | Card backgrounds & panels |
-| **Editorial Font** | `Instrument Serif` | Headlines & editorial copy |
-| **UI / Code Font** | `Inter` | Body text, labels, terminal output |
-
-<br />
-
----
-
-## 🌐 Links
-
-<br />
-
-| | |
-| :--- | :--- |
-| 🔗 **Live Demo** | [nexux-ai-azure.vercel.app](https://nexux-ai-azure.vercel.app/) |
-| 💻 **Repository** | [github.com/MERIL2026/nexux-ai](https://github.com/MERIL2026/nexux-ai) |
-| 📄 **License** | [MIT](LICENSE) |
-
-<br />
-
----
-
-## 📄 License
-
-This project is licensed under the **[MIT License](LICENSE)**.
-
-<br />
-
----
-
-<div align="center">
-
-<br />
-
-```
-  ◈  NEXUS AI  ◈
-  THINK · PLAN · APPROVE · EXECUTE · ACHIEVE
-  LOCAL / PRIVATE / POWERFUL / YOURS
-```
-
-<br />
-
-<sub>Built with precision. Designed for builders.</sub>
-
-<br />
-
-</div>
-
+MIT
