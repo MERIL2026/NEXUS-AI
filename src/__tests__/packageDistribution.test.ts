@@ -92,14 +92,14 @@ describe('P7-J — Package Distribution', () => {
       const { execSync } = await import('child_process');
       if (!fs.existsSync(binPath)) return;
       const output = execSync(`node "${binPath}" --version`, { encoding: 'utf-8' });
-      expect(output.trim()).toBe('NEXUS AI v0.1.3');
+      expect(output.trim()).toBe(`NEXUS AI v${PKG['version']}`);
     });
 
     it('executing bin.js -v prints version and exits 0', { timeout: 15000 }, async () => {
       const { execSync } = await import('child_process');
       if (!fs.existsSync(binPath)) return;
       const output = execSync(`node "${binPath}" -v`, { encoding: 'utf-8' });
-      expect(output.trim()).toBe('NEXUS AI v0.1.3');
+      expect(output.trim()).toBe(`NEXUS AI v${PKG['version']}`);
     });
 
     it('executing bin.js --help prints help and exits 0', { timeout: 15000 }, async () => {

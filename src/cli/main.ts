@@ -22,10 +22,11 @@ import {
   SIGNAL_EXIT_CHAT,
 } from './inputEngine.js';
 import { renderDashboard, renderOllamaMissingBanner, colors } from './uiFormatters.js';
+import { formatCliVersion } from './version.js';
 
 export function handleCliFlags(args: string[] = process.argv.slice(2)): boolean {
   if (args.includes('--version') || args.includes('-v')) {
-    console.log('NEXUS AI v0.1.3');
+    console.log(formatCliVersion());
     return true;
   }
 

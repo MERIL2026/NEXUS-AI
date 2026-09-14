@@ -281,9 +281,14 @@ describe('P7-E — Windows Desktop Packaging & Installer', () => {
   });
 
   // 20. Version consistency
-  it('20. Verifies version consistency (0.1.3) in package.json', () => {
+  it('20. Verifies version consistency dynamically from package.json', async () => {
     const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf-8'));
-    expect(pkg.version).toBe('0.1.3');
+    expect(pkg.version).toBeDefined();
+    expect(pkg.version).toMatch(/^\d+\.\d+\.\d+/);
+
+    const { getCliVersion, formatCliVersion } = await import('../cli/version.js');
+    expect(getCliVersion()).toBe(pkg.version);
+    expect(formatCliVersion()).toBe(`NEXUS AI v${pkg.version}`);
   });
 
   // 21. Existing P7-C first-run experience regression
