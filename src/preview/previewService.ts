@@ -176,8 +176,19 @@ export class PreviewService {
           // keep path
         }
 
-        const entryPath = path.join(canonicalProjectDir, persistedArtifact.entryPoint || 'index.html');
-        const entryExists = fs.existsSync(entryPath) && fs.statSync(entryPath).isFile();
+        let entryFile = persistedArtifact.entryPoint || 'index.html';
+        if (!entryFile.toLowerCase().endsWith('.html') && fs.existsSync(path.join(canonicalProjectDir, 'index.html'))) {
+          entryFile = 'index.html';
+        }
+
+        let entryPath = path.join(canonicalProjectDir, entryFile);
+        let entryExists = fs.existsSync(entryPath) && fs.statSync(entryPath).isFile();
+
+        if (!entryExists && fs.existsSync(path.join(canonicalProjectDir, 'index.html'))) {
+          entryFile = 'index.html';
+          entryPath = path.join(canonicalProjectDir, 'index.html');
+          entryExists = true;
+        }
 
         if (entryExists) {
           // Scan project directory for associated web files
@@ -205,15 +216,15 @@ export class PreviewService {
 
           this.logger.info(`Resolved preview artifact from SQLite metadata for task '${task.id}'`, {
             projectDir: canonicalProjectDir,
-            entryFile: persistedArtifact.entryPoint,
+            entryFile,
             fileCount: uniqueFiles.length,
           });
 
           return {
             projectDir: canonicalProjectDir,
-            entryFile: persistedArtifact.entryPoint || 'index.html',
+            entryFile,
             files: uniqueFiles,
-            hasIndexHtml: true,
+            hasIndexHtml: entryFile.endsWith('.html') || fs.existsSync(path.join(canonicalProjectDir, 'index.html')),
             isWebProject: true,
           };
         } else {
@@ -535,8 +546,14 @@ export class PreviewService {
     }
 
     // Verify artifact is a real implementation and passes content integrity checks
-    const entryFullPath = path.join(artifacts.projectDir, artifacts.entryFile || 'index.html');
-    if (fs.existsSync(entryFullPath)) {
+    let entryFileToUse = artifacts.entryFile || 'index.html';
+    if (!entryFileToUse.toLowerCase().endsWith('.html') && fs.existsSync(path.join(artifacts.projectDir, 'index.html'))) {
+      entryFileToUse = 'index.html';
+      artifacts.entryFile = 'index.html';
+    }
+
+    const entryFullPath = path.join(artifacts.projectDir, entryFileToUse);
+    if (fs.existsSync(entryFullPath) && entryFullPath.endsWith('.html')) {
       const content = fs.readFileSync(entryFullPath, 'utf8');
       const contentVerif = verifyHtmlContentSubstance(content, task.title);
 

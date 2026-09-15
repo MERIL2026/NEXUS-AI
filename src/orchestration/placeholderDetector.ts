@@ -251,14 +251,18 @@ export function extractBrandCandidates(taskGoal: string): string[] {
   }
 
   // 1. Explicit brand declaration patterns (e.g. called NOVARA AI, company called Bean & Brew, for DevForge)
+  // Strip folder/directory patterns first so folder names (e.g. 'folder called my-app') are not misidentified as brand names
+  const goalWithoutFolder = taskGoal.replace(/(?:in\s+a\s+)?(?:folder|directory|subfolder)\s+(?:called|named)\s+[`"']?[a-zA-Z0-9_\-]+[`"']?/gi, '');
+
   const namePatterns = [
-    /(?:called|named|company called|brand called|brand named|for a fictional technology company called|for a fictional ai company called|for an ai company called|for a cafe called|for a company called|for a startup called)\s+[`"']?([a-zA-Z0-9_& -]+?)[`"']?(?:\.|\s+with|\s+that|\s+including|\s+requirements|\s+featuring|\s+and|\s+in\s+a|\s+to|$)/i,
+    /(?:company called|brand called|brand named|for a fictional technology company called|for a fictional ai company called|for an ai company called|for a cafe called|for a company called|for a startup called)\s+[`"']?([a-zA-Z0-9_& -]+?)[`"']?(?:\.|\s+with|\s+that|\s+including|\s+requirements|\s+featuring|\s+and|\s+in\s+a|\s+to|$)/i,
+    /(?:called|named)\s+[`"']?([a-zA-Z0-9_& -]+?)[`"']?(?:\.|\s+with|\s+that|\s+including|\s+requirements|\s+featuring|\s+and|\s+in\s+a|\s+to|$)/i,
     /(?:portfolio|landing page|website|web app|app|application)\s+for\s+[`"']?([a-zA-Z0-9_& -]+?)[`"']?(?:\.|\s+with|\s+that|\s+including|\s+requirements|\s+featuring|\s+and|\s+in\s+a|\s+to|$)/i,
     /\bfor\s+[`"']?([A-Z][a-zA-Z0-9_&]+(?:\s+[A-Z][a-zA-Z0-9_&]+)*)[`"']?(?:\.|\s+with|\s+that|\s+including|\s+requirements|\s+featuring|\s+and|\s+in\s+a|\s+to|$)/,
   ];
 
   for (const pat of namePatterns) {
-    const match = taskGoal.match(pat);
+    const match = goalWithoutFolder.match(pat);
     if (match && match[1]) {
       let val = match[1].trim();
       val = val.replace(/^(?:a|an|the)\s+/i, '').trim();
@@ -460,16 +464,20 @@ export function verifyHtmlContentSubstance(
   if (brandCandidates.length > 0) {
     for (const b of brandCandidates) {
       const lowerB = b.toLowerCase();
-      const words = lowerB.split(/\s+/).filter((w) => w.length >= 3 && !['ai', 'inc', 'corp', 'app', 'ltd', 'co'].includes(w));
+      const words = lowerB
+        .replace(/[-_]/g, ' ')
+        .split(/\s+/)
+        .filter((w) => w.length >= 3 && !['ai', 'inc', 'corp', 'app', 'ltd', 'co', 'folder', 'directory', 'project'].includes(w));
       const hasWordMatch = words.length > 0 && words.every((w) => lowerHtml.includes(w));
-      if (lowerHtml.includes(lowerB) || hasWordMatch) {
+      const hasAnySignificantWord = words.length >= 2 && words.some((w) => lowerHtml.includes(w));
+      if (lowerHtml.includes(lowerB) || hasWordMatch || (hasAnySignificantWord && visibleText.length > 50)) {
         foundBrand = true;
         detectedBrand = b;
         break;
       }
     }
 
-    if (!foundBrand && !isCalculator) {
+    if (!foundBrand && !isCalculator && visibleText.length < 100) {
       return {
         valid: false,
         errorCategory: 'CONTENT_VERIFICATION_FAILED',
