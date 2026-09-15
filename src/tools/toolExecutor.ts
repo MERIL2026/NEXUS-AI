@@ -312,12 +312,15 @@ export class ToolExecutor {
           : typeof request.params?.path === 'string'
           ? request.params.path.trim()
           : '';
-      const expectedContentHash = typeof request.params?.expectedContentHash === 'string' ? request.params.expectedContentHash : '';
+      const expectedContentHash =
+        typeof request.params?.expectedContentHash === 'string' && request.params.expectedContentHash.trim() !== ''
+          ? request.params.expectedContentHash.trim()
+          : '*';
       const oldText = typeof request.params?.oldText === 'string' ? request.params.oldText : '';
       const newText = typeof request.params?.newText === 'string' ? request.params.newText : '';
       const replaceMode = typeof request.params?.replaceMode === 'string' ? request.params.replaceMode : 'single';
 
-      if (!relPath || !expectedContentHash || !oldText || newText === undefined) {
+      if (!relPath || !oldText || newText === undefined) {
         return {
           requestId: request.requestId,
           taskId: request.taskId,
@@ -325,7 +328,7 @@ export class ToolExecutor {
           executed: true,
           success: false,
           errorCategory: 'INVALID_INPUT',
-          errorMessage: "Tool parameters 'path', 'expectedContentHash', 'oldText', and 'newText' are required.",
+          errorMessage: "Tool parameters 'path', 'oldText', and 'newText' are required.",
           timestamp,
         };
       }

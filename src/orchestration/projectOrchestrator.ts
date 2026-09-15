@@ -32,6 +32,7 @@ import {
   verifyChildUnitContentSubstance,
   extractBrandCandidates,
 } from './placeholderDetector.js';
+import { calculateContentHash } from '../tools/adapters/filesystemAdapter.js';
 import { Logger, LogLevel } from '../common/logger.js';
 
 export interface ProjectOrchestratorOptions {
@@ -512,6 +513,9 @@ export class ProjectTaskOrchestrator {
     if (existingSnippet) {
       lines.push('\nExisting Files State:');
       lines.push(existingSnippet);
+      lines.push('\nEditing Guidance:');
+      lines.push('- When modifying existing files, you can use filesystem_write to update the entire file, or filesystem_edit.');
+      lines.push('- If using filesystem_edit, set expectedContentHash to "*" or to the exact contentHash shown above.');
     }
 
     if (retryError) {
@@ -522,7 +526,7 @@ export class ProjectTaskOrchestrator {
   }
 
   /**
-   * Reads existing workspace files up to a small bounded snippet for context.
+   * Reads existing workspace files up to a bounded snippet for context.
    */
   private getRelevantFilesSnippet(targetFiles: string[]): string {
     const snippets: string[] = [];
@@ -531,10 +535,11 @@ export class ProjectTaskOrchestrator {
       if (fs.existsSync(fullPath) && fs.statSync(fullPath).isFile()) {
         try {
           const content = fs.readFileSync(fullPath, 'utf8');
-          // Limit to max 50 lines to keep context tight
+          const hash = calculateContentHash(content);
           const lines = content.split('\n');
-          const preview = lines.slice(0, 50).join('\n');
-          snippets.push(`--- ${relFile} (${lines.length} lines) ---\n${preview}${lines.length > 50 ? '\n... (remaining lines omitted)' : ''}`);
+          // Provide up to 300 lines of context so all sections/elements are visible
+          const preview = lines.slice(0, 300).join('\n');
+          snippets.push(`--- ${relFile} (${lines.length} lines, contentHash: "${hash}") ---\n${preview}${lines.length > 300 ? '\n... (remaining lines omitted)' : ''}`);
         } catch {
           /* ignore read error */
         }

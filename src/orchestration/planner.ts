@@ -56,7 +56,7 @@ TOOL CONTRACT & CAPABILITY RULES:
 2. code_search: READ-ONLY source code search. MUST NEVER be used to create or modify files.
 3. filesystem_read: READ-ONLY file content inspection. MUST NEVER be used to create or modify files.
 4. filesystem_write: Used ONLY to CREATE new files or REPLACE full file contents. Requires filesystem.write.
-5. filesystem_edit: Used ONLY to MODIFY existing files. Requires filesystem.write.
+5. filesystem_edit: Used ONLY to MODIFY existing files. Requires filesystem.write. Use expectedContentHash: "*" (or exact SHA-256 hash).
 6. terminal_execute: Used ONLY for executing allowed terminal/build/test commands. Requires terminal.execute. High risk, approval-controlled.
 
 STRICT PLAN & JSON ESCAPING RULES:

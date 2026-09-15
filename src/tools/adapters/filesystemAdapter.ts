@@ -970,7 +970,13 @@ export class FilesystemAdapter {
     }
 
     const currentHash = calculateContentHash(currentContent);
-    if (currentHash.toLowerCase() !== expectedContentHash.toLowerCase()) {
+    const isWildcardHash =
+      expectedContentHash === '*' ||
+      expectedContentHash.toLowerCase() === 'auto' ||
+      expectedContentHash.toLowerCase() === 'latest' ||
+      expectedContentHash.toLowerCase() === 'current';
+
+    if (!isWildcardHash && currentHash.toLowerCase() !== expectedContentHash.toLowerCase()) {
       return {
         success: false,
         errorCategory: 'HASH_MISMATCH_CONFLICT',

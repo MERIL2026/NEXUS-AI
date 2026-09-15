@@ -266,6 +266,16 @@ describe('P6-B — Safe Workspace File Editing & Diffs (filesystem_write & files
       expect(res.success).toBe(true);
     });
 
+    it('20b. succeeds when wildcard expectedContentHash "*" or "auto" is provided', () => {
+      const resWildcard = adapter.editFile('src/example.ts', '*', 'Hello World', 'NEXUS-WILDCARD');
+      expect(resWildcard.success).toBe(true);
+
+      const resAuto = adapter.editFile('src/example.ts', 'auto', 'NEXUS-WILDCARD', 'Hello Universe');
+      expect(resAuto.success).toBe(true);
+      const content = fs.readFileSync(path.join(tempDir, 'src', 'example.ts'), 'utf8');
+      expect(content).toContain('Hello Universe');
+    });
+
     it('21. rejects edits targeting secret files', () => {
       fs.writeFileSync(path.join(tempDir, '.env'), 'SECRET=123');
       const hash = calculateContentHash('SECRET=123');

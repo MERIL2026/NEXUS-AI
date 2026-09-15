@@ -140,7 +140,7 @@ export const FILESYSTEM_EDIT_TOOL_DEFINITION: ToolDefinition = {
     },
     expectedContentHash: {
       type: 'string',
-      description: 'SHA-256 hash of expected current file content',
+      description: 'SHA-256 hash of expected current file content, or "*" / "auto"',
     },
     oldText: {
       type: 'string',
