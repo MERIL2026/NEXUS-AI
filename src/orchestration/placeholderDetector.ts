@@ -440,7 +440,7 @@ export function verifyHtmlContentSubstance(
 
   // ── CHECK 4: Visible Text Check (Non-Blank Body) ──────────────────────────
   const visibleText = extractVisibleText(bodyHtml);
-  const hasVisualElements = /<(?:img|svg|input|button|canvas|form|video|audio|iframe)\b/i.test(bodyHtml);
+  const hasVisualElements = /<(?:img|svg|input|button|canvas|form|video|audio|iframe|textarea|select|header|nav|main|aside|section|div|script|table)\b/i.test(bodyHtml);
 
   if (visibleText.length === 0 && !hasVisualElements) {
     return {
